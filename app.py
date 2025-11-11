@@ -163,8 +163,19 @@ with tab1:
         st.plotly_chart(fig, use_container_width=True)
         st.markdown("---")
         st.subheader("Today's Performance")
-        st.dataframe(df_live.style.format({"Return":"{:+.2f}%","Contribution":"{:+.3f}%","Weight":"{:.2f}%"}), use_container_width=True, height=350)
 
+        # ✅ Sort by Return (highest first)
+        df_live = df_live.sort_values(by="Weight", ascending=False)
+
+        st.dataframe(
+            df_live.style.format({
+                "Return": "{:+.2f}%",
+                "Contribution": "{:+.3f}%",
+                "Weight": "{:.2f}%"
+            }),
+            use_container_width=True,
+            height=350
+        )
         st.markdown("---")
         st.subheader("Heatmap")
         heat = np.array([df_live["Return"].values])
@@ -207,7 +218,11 @@ with tab2:
     st.markdown("---")
     st.subheader("Existing Stocks")
     portfolio_df = load_portfolio_df()
+
     if not portfolio_df.empty:
+        # ✅ Sort by allocation (highest first)
+        portfolio_df = portfolio_df.sort_values(by="allocation", ascending=False)
+
         for sym, r in portfolio_df.iterrows():
             with st.expander(f"{sym} — {r['allocation']:.2f}%"):
                 url_in = st.text_input("URL", value=r["url"], key=f"url_{sym}")
