@@ -1,0 +1,44 @@
+name: Daily Portfolio Fetch
+
+on:
+  schedule:
+    - cron: '0 10 * * 1-5'  # 10:00 UTC Mon-Fri -> ~15:30 IST
+  workflow_dispatch:
+
+jobs:
+  fetch-and-commit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo (with write)
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: true
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run daily fetch
+        env:
+          PORTFOLIO_DB: ./portfolio.db
+        run: |
+          python daily_fetch.py
+      
+      - name: Commit updated DB (if changed)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add portfolio.db || true
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: daily snapshot update ($(date -u))" || echo "commit failed"
+            git push
+          else
+            echo "No changes to commit"
+          fiß
