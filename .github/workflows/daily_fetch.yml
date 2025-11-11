@@ -8,6 +8,8 @@ on:
 jobs:
   fetch-and-commit:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write   # ✅ allows git push using GITHUB_TOKEN
     steps:
       - name: Checkout repo (with write)
         uses: actions/checkout@v4
