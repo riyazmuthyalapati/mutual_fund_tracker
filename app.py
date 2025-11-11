@@ -124,7 +124,7 @@ def load_history_df() -> pd.DataFrame:
     return pd.DataFrame(columns=["id","date","symbol","ret","allocation","contribution"])
 
 # ---------- App ----------
-st.title("📈 Portfolio Tracker — Upgraded")
+st.title("Motilal Midcap Fund Real Time Returns")
 st.caption("Persistent SQLite (repo) • NSE holiday-aware scheduling • Rolling windows & MF comparison")
 
 tab1, tab2, tab3 = st.tabs(["📊 Portfolio","⚙️ Manage","🧾 History & MF"])
