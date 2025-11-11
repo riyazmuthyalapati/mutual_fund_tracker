@@ -32,12 +32,14 @@ jobs:
           python daily_fetch.py
       
       - name: Commit updated DB (if changed)
+        shell: bash
         run: |
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add portfolio.db || true
           if ! git diff --cached --quiet; then
-            git commit -m "chore: daily snapshot update ($(date -u))" || echo "commit failed"
+            COMMIT_MSG="chore: daily snapshot update ($(date -u))"
+            git commit -m "$COMMIT_MSG" || echo "commit failed"
             git push
           else
             echo "No changes to commit"
