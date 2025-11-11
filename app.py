@@ -8,6 +8,8 @@ from datetime import date, datetime
 import sqlalchemy as sa
 from sqlalchemy import Table, Column, String, Float, Date, Integer, MetaData
 import plotly.express as px
+import warnings
+warnings.filterwarnings("ignore")
 
 # ---------- Config ----------
 DB_PATH = os.environ.get("PORTFOLIO_DB", "portfolio.db")
@@ -128,7 +130,7 @@ st.caption("Persistent SQLite (repo) • NSE holiday-aware scheduling • Rollin
 tab1, tab2, tab3 = st.tabs(["📊 Portfolio","⚙️ Manage","🧾 History & MF"])
 
 with tab1:
-    st.button("🔄 Refresh live data", on_click=lambda: st.experimental_rerun())
+    st.button("🔄 Refresh live data", on_click=lambda: st.rerun())
     portfolio_df = load_portfolio_df()
     if portfolio_df.empty:
         st.info("No stocks in portfolio. Add some in the Manage tab.")
@@ -138,8 +140,9 @@ with tab1:
         rows = []
         total_weighted = 0.0
         progress = st.progress(0)
+        status_placeholder = st.empty()
         for i, (sym, r) in enumerate(portfolio_df.iterrows()):
-            st.write(f"Fetching {sym}...")
+            status_placeholder.write(f"Fetching **{sym}**...")
             ret = fetch_stock_return(r["url"])
             allocation_val = float(r["allocation"])
             norm = allocation_val / total_alloc if total_alloc > 0 else 0.0
@@ -148,6 +151,7 @@ with tab1:
             rows.append({"Stock": sym, "Return": ret, "Weight": allocation_val, "Contribution": contrib})
             progress.progress((i + 1) / len(portfolio_df))
             time.sleep(0.05)
+        status_placeholder.success("✅ All stocks fetched successfully!")
         progress.empty()
 
         df_live = pd.DataFrame(rows).set_index("Stock")
@@ -196,7 +200,7 @@ with tab2:
             if new_sym and new_url:
                 save_stock(new_sym.upper().strip(), new_url.strip(), float(new_alloc))
                 st.success(f"Saved {new_sym.upper().strip()}")
-                st.experimental_rerun()
+                st.rerun()
             else:
                 st.error("Please fill symbol and URL")
 
@@ -213,12 +217,12 @@ with tab2:
                     if st.button("💾 Update", key=f"update_{sym}"):
                         save_stock(sym, url_in, float(alloc_in))
                         st.success("Updated")
-                        st.experimental_rerun()
+                        st.rerun()
                 with col2:
                     if st.button("🗑 Delete", key=f"delete_{sym}"):
                         delete_stock(sym)
                         st.success("Deleted")
-                        st.experimental_rerun()
+                        st.rerun()
     else:
         st.info("No stocks yet. Add one above.")
 
