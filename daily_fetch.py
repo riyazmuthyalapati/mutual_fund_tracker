@@ -1,22 +1,25 @@
-# daily_fetch.py
-import sqlalchemy as sa
+# daily_fetch.py — Supabase version
+
+import requests, re, time, os
+from datetime import date
 import pandas as pd
-import requests, re, time
-from bs4 import BeautifulSoup
-from datetime import date, datetime
 import pandas_market_calendars as mcal
+from bs4 import BeautifulSoup
+from supabase import create_client, Client
 import os
+from dotenv import load_dotenv
 
-DB_PATH = os.environ.get("PORTFOLIO_DB", "portfolio.db")
-ENGINE = sa.create_engine(f"sqlite:///{DB_PATH}", connect_args={"check_same_thread": False})
-META = sa.MetaData()
-META.reflect(bind=ENGINE)
+# Load environment variables from .env file (for local dev)
+load_dotenv()
 
-stocks_table = sa.Table("stocks", META, autoload_with=ENGINE)
-history_table = sa.Table("history", META, autoload_with=ENGINE)
-snapshots_table = sa.Table("portfolio_snapshots", META, autoload_with=ENGINE)
+# ---------- Supabase Config ----------
+SUPABASE_URL = os.getenv("SUPABASE_URL")
+SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
+# ---------- Helpers ----------
 def fetch_stock_return(url: str) -> float:
+    """Scrape stock % change from screener.in"""
     try:
         headers = {'User-Agent': 'Mozilla/5.0'}
         r = requests.get(url, headers=headers, timeout=10)
@@ -34,32 +37,32 @@ def fetch_stock_return(url: str) -> float:
         return 0.0
 
 def is_nse_trading_day(check_date: date) -> bool:
-    # Use pandas_market_calendars for NSE calendar
+    """Check if the given date is an NSE trading day"""
     try:
         cal = mcal.get_calendar("NSE")
-        # schedule for that date (start == end)
         sched = cal.schedule(start_date=check_date.isoformat(), end_date=check_date.isoformat())
         return not sched.empty
     except Exception as e:
         print("Error checking NSE calendar:", e)
-        # fallback to weekend-only
-        return check_date.weekday() < 5
+        return check_date.weekday() < 5  # fallback: Mon–Fri
 
+# ---------- Main ----------
 def main():
     today = date.today()
     if not is_nse_trading_day(today):
         print(f"{today} is not an NSE trading day. Exiting.")
         return
 
-    with ENGINE.connect() as conn:
-        df = pd.read_sql_table("stocks", conn)
+    # Load stock list
+    res = supabase.table("stocks").select("*").execute()
+    df = pd.DataFrame(res.data)
     if df.empty:
-        print("No stocks configured. Exiting.")
+        print("No stocks configured in Supabase. Exiting.")
         return
 
     total_alloc = df["allocation"].sum()
-    rows = []
-    total_weighted = 0.0
+    rows, total_weighted = [], 0.0
+
     for _, row in df.iterrows():
         sym = row["symbol"]
         url = row["url"]
@@ -68,16 +71,28 @@ def main():
         norm = alloc / total_alloc if total_alloc > 0 else 0.0
         contrib = ret * norm
         total_weighted += contrib
-        rows.append({"date": today, "symbol": sym, "ret": float(ret), "allocation": alloc, "contribution": float(contrib)})
+
+        rows.append({
+            "date": today,
+            "symbol": sym,
+            "ret": float(ret),
+            "allocation": alloc,
+            "contribution": float(contrib)
+        })
+        print(f"{sym}: {ret:+.2f}% ({alloc:.1f}%)")
         time.sleep(0.1)
 
-    # persist
-    with ENGINE.begin() as conn:
-        conn.execute(snapshots_table.insert().prefix_with("OR REPLACE"), {"date": today, "portfolio_return": float(total_weighted)})
-        for r in rows:
-            conn.execute(history_table.insert(), r)
+    # Save to Supabase
+    print(f"Saving {len(rows)} records to Supabase...")
+    supabase.table("portfolio_snapshots").upsert({
+        "date": today,
+        "portfolio_return": float(total_weighted)
+    }).execute()
 
-    print(f"Saved snapshot for {today}. Portfolio return: {total_weighted:+.4f}%")
+    for r in rows:
+        supabase.table("history").insert(r).execute()
+
+    print(f"✅ Saved snapshot for {today}. Portfolio return: {total_weighted:+.4f}%")
 
 if __name__ == "__main__":
     main()

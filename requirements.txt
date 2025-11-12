@@ -11,3 +11,5 @@ sqlalchemy
 pandas_market_calendars
 lxml
 python-dateutil
+supabase
+python-dotenv
