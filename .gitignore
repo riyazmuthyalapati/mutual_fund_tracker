@@ -1,0 +1,59 @@
+# ------------------------------
+# Python & Streamlit Project
+# ------------------------------
+
+# Virtual environments
+venv/
+.env/
+.venv/
+env/
+ENV/
+
+# Local environment variables
+*.env
+secrets.toml
+.streamlit/secrets.toml
+
+# Byte-compiled / cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution / packaging
+build/
+dist/
+*.egg-info/
+.eggs/
+
+# Logs and databases
+*.log
+*.sqlite
+*.db
+portfolio.db
+
+# IDE / editor folders
+.vscode/
+.idea/
+.DS_Store
+
+# Jupyter & notebook checkpoints
+.ipynb_checkpoints/
+*.ipynb
+
+# Streamlit temporary files
+.streamlit/cache/
+.streamlit/config.toml
+
+# OS specific
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Pytest / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.cache/
+
+# Local test outputs
+test_output/
