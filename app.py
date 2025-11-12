@@ -248,7 +248,24 @@ with tab3:
 
     if not snaps.empty:
         snaps_display = snaps.set_index("date").sort_index()
-        st.line_chart(snaps_display["portfolio_return"])
+
+        # ✅ Plot with Plotly - clean daily x-axis
+        fig_snap = px.line(
+            snaps_display,
+            x=snaps_display.index,
+            y="portfolio_return",
+            title="Portfolio Return History"
+        )
+        fig_snap.update_layout(
+            xaxis_title="Date",
+            yaxis_title="Portfolio Return (%)",
+            xaxis=dict(
+                tickformat="%b %d",  # shows dates as "Nov 11", "Nov 12"
+                dtick="D1"           # one tick per day
+            )
+        )
+        st.plotly_chart(fig_snap, use_container_width=True)
+
         # rolling windows (difference over n days)
         df_roll = snaps_display.copy()
         df_roll["3d"] = df_roll["portfolio_return"].diff(3)
@@ -256,9 +273,28 @@ with tab3:
         df_roll["10d"] = df_roll["portfolio_return"].diff(10)
         df_roll["15d"] = df_roll["portfolio_return"].diff(15)
         df_roll["30d"] = df_roll["portfolio_return"].diff(30)
-        st.line_chart(df_roll[["3d","5d","10d","15d","30d"]].dropna())
-    else:
-        st.info("No snapshots yet. Use scheduled runner or Save snapshot from Portfolio tab.")
+
+        # ✅ Keep only columns that have at least one non-null value
+        available_cols = [col for col in ["3d", "5d", "10d", "15d", "30d"] if df_roll[col].notna().any()]
+
+        if len(available_cols) > 0 and len(df_roll) > 1:
+            fig_roll = px.line(
+                df_roll,
+                x=df_roll.index,
+                y=available_cols,
+                title="Rolling Returns (Days)"
+            )
+            fig_roll.update_layout(
+                xaxis_title="Date",
+                yaxis_title="Return Change (%)",
+                xaxis=dict(
+                    tickformat="%b %d",
+                    dtick="D1"
+                )
+            )
+            st.plotly_chart(fig_roll, use_container_width=True)
+        else:
+            st.info("Not enough historical data for rolling returns yet.")
 
     st.markdown("---")
     st.subheader("Enter real mutual fund return (manual)")
