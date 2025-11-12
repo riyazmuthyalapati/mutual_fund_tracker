@@ -71,25 +71,27 @@
    streamlit run app.py
    ```
 
-3️⃣ Streamlit Cloud Deployment
-	1.	Push this repository to GitHub.
-	2.	On Streamlit Cloud, create a new app linked to your repo.
-	3.	Go to App → Settings → Secrets and add:
-  ```
-  SUPABASE_URL = "https://your-project.supabase.co"
-  SUPABASE_KEY = "your-anon-key"
-  ```
-4.	Deploy — the app will use Supabase directly (no .env needed).
+### 3️⃣ Streamlit Cloud Deployment
+1. Push this repository to GitHub.
+2. On Streamlit Cloud, create a new app linked to your repo.
+3. Go to App → Settings → Secrets and add:
+   ```
+   SUPABASE_URL = "https://your-project.supabase.co"
+   SUPABASE_KEY = "your-anon-key"
+   ```
+4. Deploy — the app will use Supabase directly (no .env needed).
 
-4️⃣ GitHub Actions (Daily Fetch)
-	•	The workflow .github/workflows/daily_fetch.yml runs daily_fetch.py every Mon–Fri at 10:00 UTC (~15:30 IST).
-	•	It uses pandas_market_calendars to skip NSE holidays automatically.
-	•	The script fetches daily Screener returns, calculates portfolio-weighted returns, and inserts them into Supabase.
-	•	Required GitHub Secrets:
-	•	SUPABASE_URL
-	•	SUPABASE_KEY
+### 4️⃣ GitHub Actions (Daily Fetch)
+- The workflow `.github/workflows/daily_fetch.yml` runs `daily_fetch.py` every Mon–Fri at 10:00 UTC (~15:30 IST).
+- It uses `pandas_market_calendars` to skip NSE holidays automatically.
+- The script fetches daily Screener returns, calculates portfolio-weighted returns, and inserts them into Supabase.
+- Required GitHub Secrets:
+  - `SUPABASE_URL`
+  - `SUPABASE_KEY`
 
-⚙️ Features
+---
+
+## ⚙️ Features
 
 ✅ Real-time stock return fetching from Screener.in
 ✅ Persistent Supabase backend (Postgres)
@@ -98,14 +100,19 @@
 ✅ Rolling window and daily performance charts
 ✅ Modern, responsive Streamlit interface
 
+---
 
-🔒 Security
-	•	Never commit .env or secrets — add them to .gitignore.
-	•	Use GitHub Secrets for Actions and Streamlit Cloud Secrets for deployments.
-	•	API keys are securely read via environment variables or st.secrets.
+## 🔒 Security
 
-🚀 Roadmap
-	•	Per-stock historical trend analysis
-	•	Index or benchmark comparison
-	•	Multi-user authentication with Supabase Auth
-	•	Real-time updates using Supabase Realtime
+- Never commit `.env` or secrets — add them to `.gitignore`.
+- Use GitHub Secrets for Actions and Streamlit Cloud Secrets for deployments.
+- API keys are securely read via environment variables or `st.secrets`.
+
+---
+
+## 🚀 Roadmap
+
+- Per-stock historical trend analysis
+- Index or benchmark comparison
+- Multi-user authentication with Supabase Auth
+- Real-time updates using Supabase Realtime
