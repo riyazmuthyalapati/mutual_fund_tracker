@@ -159,9 +159,9 @@ with tab1:
         st.metric("Green Stocks", f"{(df_live['Return']>0).sum()}/{len(df_live)}")
         st.markdown("---")
         # weight pie
-        fig = px.pie(values=df_live["Weight"], names=df_live.index, title="Portfolio Weights")
-        st.plotly_chart(fig, use_container_width=True)
-        st.markdown("---")
+        # fig = px.pie(values=df_live["Weight"], names=df_live.index, title="Portfolio Weights")
+        # st.plotly_chart(fig, use_container_width=True)
+        # st.markdown("---")
         st.subheader("Today's Performance")
 
         # ✅ Sort by Return (highest first)
