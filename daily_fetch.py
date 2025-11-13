@@ -11,11 +11,14 @@ from dotenv import load_dotenv
 
 # Load environment variables from .env file (for local dev)
 load_dotenv()
-
 # ---------- Supabase Config ----------
-SUPABASE_URL = os.getenv("SUPABASE_URL")
-SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+# Try to load from .env first, then fallback to Streamlit secrets (for cloud)
+try:
+    SUPABASE_URL = os.getenv("SUPABASE_URL") or st.secrets["SUPABASE_URL"]
+    SUPABASE_KEY = os.getenv("SUPABASE_KEY") or st.secrets["SUPABASE_KEY"]
+except Exception:
+    SUPABASE_URL = os.getenv("SUPABASE_URL")
+    SUPABASE_KEY = os.getenv("SUPABASE_KEY")
 
 # ---------- Helpers ----------
 def fetch_stock_return(url: str) -> float:
