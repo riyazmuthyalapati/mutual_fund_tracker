@@ -1,4 +1,4 @@
-# daily_fetch.py — Supabase version
+# daily_fetch.py — Supabase version (Fixed % calculation)
 
 import requests, re, time, os
 from datetime import date
@@ -6,93 +6,120 @@ import pandas as pd
 import pandas_market_calendars as mcal
 from bs4 import BeautifulSoup
 from supabase import create_client, Client
-import os
 from dotenv import load_dotenv
 
-# Load environment variables from .env file (for local dev)
+# Load .env for local development
 load_dotenv()
 
 # ---------- Supabase Config ----------
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
+
+if not SUPABASE_URL or not SUPABASE_KEY:
+    raise ValueError("❌ Missing SUPABASE_URL or SUPABASE_KEY")
+
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # ---------- Helpers ----------
 def fetch_stock_return(url: str) -> float:
-    """Scrape stock % change from screener.in"""
+    """Scrape stock % change from screener.in, return 1.23 meaning 1.23%"""
     try:
         headers = {'User-Agent': 'Mozilla/5.0'}
         r = requests.get(url, headers=headers, timeout=10)
         r.raise_for_status()
+
         text = r.text
         m = re.search(r"[+-]?[0-9]+\.[0-9]+(?=%)", text)
         if m:
             return float(m.group())
+
         m2 = re.search(r"[+-]?[0-9]+(?=\s?%)", text)
         if m2:
             return float(m2.group())
+
         return 0.0
     except Exception as e:
         print(f"Fetch error for {url}: {e}")
         return 0.0
 
+
 def is_nse_trading_day(check_date: date) -> bool:
-    """Check if the given date is an NSE trading day"""
+    """Check if the day is an NSE trading day."""
     try:
         cal = mcal.get_calendar("NSE")
-        sched = cal.schedule(start_date=check_date.isoformat(), end_date=check_date.isoformat())
+        sched = cal.schedule(start_date=check_date.isoformat(),
+                             end_date=check_date.isoformat())
         return not sched.empty
     except Exception as e:
-        print("Error checking NSE calendar:", e)
-        return check_date.weekday() < 5  # fallback: Mon–Fri
+        print("Calendar lookup failed:", e)
+        return check_date.weekday() < 5   # fallback to Mon–Fri only
+
 
 # ---------- Main ----------
 def main():
     today = date.today()
+
     if not is_nse_trading_day(today):
-        print(f"{today} is not an NSE trading day. Exiting.")
+        print(f"{today} is NOT a trading day. Exiting.")
         return
 
-    # Load stock list
+    # Load stocks from Supabase
     res = supabase.table("stocks").select("*").execute()
     df = pd.DataFrame(res.data)
+
     if df.empty:
-        print("No stocks configured in Supabase. Exiting.")
+        print("No stocks configured. Exiting.")
         return
 
     total_alloc = df["allocation"].sum()
-    rows, total_weighted = [], 0.0
+    rows = []
+    weighted_total_decimal = 0.0   # decimal internal calc
 
     for _, row in df.iterrows():
         sym = row["symbol"]
         url = row["url"]
-        ret = fetch_stock_return(url)
-        alloc = float(row["allocation"])
-        norm = alloc / total_alloc if total_alloc > 0 else 0.0
-        contrib = ret * norm
-        total_weighted += contrib
+        ret_percent = fetch_stock_return(url)    # example: 1.23
+        alloc_percent = float(row["allocation"])
+
+        norm = alloc_percent / total_alloc if total_alloc > 0 else 0.0
+
+        # Convert ret percent → decimal
+        ret_decimal = ret_percent / 100.0
+
+        # Weighted return in decimal
+        contrib_decimal = ret_decimal * norm
+
+        weighted_total_decimal += contrib_decimal
 
         rows.append({
-            "date": today,
+            "date": today.isoformat(),           # Must be string
             "symbol": sym,
-            "ret": float(ret),
-            "allocation": alloc,
-            "contribution": float(contrib)
+            "ret": round(ret_percent, 2),        # store as percent
+            "allocation": alloc_percent,
+            "contribution": round(contrib_decimal * 100, 3)  # store as percent
         })
-        print(f"{sym}: {ret:+.2f}% ({alloc:.1f}%)")
+
+        print(f"{sym}: ret={ret_percent:+.2f}%  alloc={alloc_percent:.1f}%")
+
         time.sleep(0.1)
 
-    # Save to Supabase
-    print(f"Saving {len(rows)} records to Supabase...")
+    # Total portfolio return (percent)
+    portfolio_return_percent = round(weighted_total_decimal * 100, 2)
+
+    print(f"\nSaving {len(rows)} history rows to Supabase...")
+    print(f"Portfolio Return Today: {portfolio_return_percent:+.2f}%")
+
+    # Save snapshot (percent)
     supabase.table("portfolio_snapshots").upsert({
-        "date": today,
-        "portfolio_return": float(total_weighted)
+        "date": today.isoformat(),
+        "portfolio_return": portfolio_return_percent
     }).execute()
 
-    for r in rows:
-        supabase.table("history").insert(r).execute()
+    # Insert history rows
+    supabase.table("history").insert(rows).execute()
 
-    print(f"✅ Saved snapshot for {today}. Portfolio return: {total_weighted:+.4f}%")
+    print(f"✅ Snapshot saved for {today}")
+
 
 if __name__ == "__main__":
     main()
