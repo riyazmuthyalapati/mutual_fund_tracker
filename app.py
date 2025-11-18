@@ -91,28 +91,35 @@ st.markdown("""
     }
     
     /* Buttons */
-    .stButton > button {
-        background: linear-gradient(135deg, #00e5ff 0%, #00b8d4 100%);
-        color: #0a0e27;
-        border: none;
-        border-radius: 12px;
-        padding: 0.75rem 2rem;
-        font-weight: 600;
-        font-size: 0.95rem;
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        box-shadow: 0 4px 16px rgba(0, 229, 255, 0.3);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
+    .stButton > button,
+    .stFormSubmitButton > button,
+    button[kind="primary"],
+    button[kind="secondary"] {
+        background: linear-gradient(135deg, #00e5ff 0%, #00b8d4 100%) !important;
+        color: #0a0e27 !important;
+        border: none !important;
+        border-radius: 12px !important;
+        padding: 0.75rem 2rem !important;
+        font-weight: 600 !important;
+        font-size: 0.95rem !important;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+        box-shadow: 0 4px 16px rgba(0, 229, 255, 0.3) !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
     }
     
-    .stButton > button:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 8px 24px rgba(0, 229, 255, 0.5);
-        background: linear-gradient(135deg, #00f5ff 0%, #00c8e4 100%);
+    .stButton > button:hover,
+    .stFormSubmitButton > button:hover,
+    button[kind="primary"]:hover,
+    button[kind="secondary"]:hover {
+        transform: translateY(-2px) !important;
+        box-shadow: 0 8px 24px rgba(0, 229, 255, 0.5) !important;
+        background: linear-gradient(135deg, #00f5ff 0%, #00c8e4 100%) !important;
     }
     
-    .stButton > button:active {
-        transform: translateY(0px);
+    .stButton > button:active,
+    .stFormSubmitButton > button:active {
+        transform: translateY(0px) !important;
     }
     
     /* Tabs */
@@ -145,44 +152,156 @@ st.markdown("""
         border: 1px solid rgba(0, 229, 255, 0.3);
     }
     
-    /* DataFrames */
-    [data-testid="stDataFrame"] {
-        background: rgba(255, 255, 255, 0.02);
-        border-radius: 16px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        overflow: hidden;
+    /* DataFrames - Force Dark Theme */
+    [data-testid="stDataFrame"],
+    [data-testid="stDataFrame"] > div,
+    [data-testid="stDataFrame"] > div > div,
+    [data-testid="stDataFrame"] iframe {
+        background: rgba(26, 31, 58, 0.4) !important;
+        border-radius: 16px !important;
+        border: 1px solid rgba(0, 229, 255, 0.2) !important;
+        overflow: hidden !important;
     }
     
-    /* Input Fields */
+    /* DataFrame Table Styling */
+    [data-testid="stDataFrame"] table,
+    [data-testid="stDataFrame"] table tbody,
+    [data-testid="stDataFrame"] table thead {
+        background: transparent !important;
+    }
+    
+    /* Table Headers */
+    [data-testid="stDataFrame"] thead tr th,
+    [data-testid="stDataFrame"] th {
+        background: linear-gradient(135deg, rgba(0, 229, 255, 0.2) 0%, rgba(0, 184, 212, 0.15) 100%) !important;
+        color: #00e5ff !important;
+        font-weight: 600 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+        font-size: 0.85rem !important;
+        padding: 1rem 0.75rem !important;
+        border-bottom: 2px solid rgba(0, 229, 255, 0.4) !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.05) !important;
+    }
+    
+    /* Table Body Rows */
+    [data-testid="stDataFrame"] tbody tr,
+    [data-testid="stDataFrame"] tr {
+        background: rgba(26, 31, 58, 0.3) !important;
+        transition: all 0.2s ease !important;
+    }
+    
+    [data-testid="stDataFrame"] tbody tr:hover,
+    [data-testid="stDataFrame"] tr:hover {
+        background: rgba(0, 229, 255, 0.08) !important;
+        transform: scale(1.005) !important;
+    }
+    
+    /* Table Cells */
+    [data-testid="stDataFrame"] tbody tr td,
+    [data-testid="stDataFrame"] td {
+        color: rgba(255, 255, 255, 0.95) !important;
+        padding: 0.75rem !important;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.03) !important;
+        font-weight: 400 !important;
+        background: transparent !important;
+    }
+    
+    /* Alternating row colors */
+    [data-testid="stDataFrame"] tbody tr:nth-child(even),
+    [data-testid="stDataFrame"] tr:nth-child(even) {
+        background: rgba(26, 31, 58, 0.5) !important;
+    }
+    
+    [data-testid="stDataFrame"] tbody tr:nth-child(even):hover,
+    [data-testid="stDataFrame"] tr:nth-child(even):hover {
+        background: rgba(0, 229, 255, 0.1) !important;
+    }
+    
+    
+    
+    
+    /* Input Fields - More Aggressive Selectors */
     .stTextInput > div > div > input,
-    .stNumberInput > div > div > input {
-        background: rgba(255, 255, 255, 0.05);
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        border-radius: 12px;
-        color: #ffffff;
-        padding: 0.75rem 1rem;
-        transition: all 0.3s ease;
+    .stNumberInput > div > div > input,
+    input[type="text"],
+    input[type="number"],
+    .stTextInput input,
+    .stNumberInput input,
+    div[data-baseweb="input"] > input {
+        background: rgba(26, 31, 58, 0.6) !important;
+        border: 1px solid rgba(0, 229, 255, 0.3) !important;
+        border-radius: 12px !important;
+        color: #ffffff !important;
+        padding: 0.75rem 1rem !important;
+        transition: all 0.3s ease !important;
     }
     
     .stTextInput > div > div > input:focus,
-    .stNumberInput > div > div > input:focus {
-        border-color: #00e5ff;
-        box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.2);
-        background: rgba(255, 255, 255, 0.08);
+    .stNumberInput > div > div > input:focus,
+    input[type="text"]:focus,
+    input[type="number"]:focus {
+        border-color: #00e5ff !important;
+        box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.3) !important;
+        background: rgba(26, 31, 58, 0.8) !important;
     }
+    
+    /* Input Labels - Make Visible */
+    .stTextInput label,
+    .stNumberInput label,
+    .stSelectbox label,
+    .stForm label,
+    label[data-testid="stWidgetLabel"],
+    div[data-testid="stMarkdownContainer"] p,
+    .stTextInput > label,
+    .stNumberInput > label {
+        color: rgba(255, 255, 255, 0.95) !important;
+        font-weight: 500 !important;
+        font-size: 0.9rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+    
+    /* Number Input Buttons */
+    .stNumberInput button {
+        background: rgba(0, 229, 255, 0.1) !important;
+        color: #00e5ff !important;
+        border: 1px solid rgba(0, 229, 255, 0.3) !important;
+    }
+    
+    .stNumberInput button:hover {
+        background: rgba(0, 229, 255, 0.2) !important;
+    }
+    
+    
     
     /* Expander */
-    .streamlit-expanderHeader {
-        background: rgba(255, 255, 255, 0.03);
-        border-radius: 12px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        font-weight: 500;
-        transition: all 0.3s ease;
+    .streamlit-expanderHeader,
+    [data-testid="stExpander"] > div:first-child,
+    div[data-testid="stExpander"] summary {
+        background: rgba(26, 31, 58, 0.5) !important;
+        border-radius: 12px !important;
+        border: 1px solid rgba(0, 229, 255, 0.2) !important;
+        font-weight: 500 !important;
+        transition: all 0.3s ease !important;
+        color: rgba(255, 255, 255, 0.95) !important;
+        padding: 0.75rem 1rem !important;
     }
     
-    .streamlit-expanderHeader:hover {
-        background: rgba(255, 255, 255, 0.05);
-        border-color: rgba(0, 229, 255, 0.3);
+    .streamlit-expanderHeader:hover,
+    [data-testid="stExpander"] > div:first-child:hover,
+    div[data-testid="stExpander"] summary:hover {
+        background: rgba(26, 31, 58, 0.7) !important;
+        border-color: rgba(0, 229, 255, 0.4) !important;
+    }
+    
+    /* Expander Content - Fix Input Visibility */
+    .streamlit-expanderContent input[type="text"],
+    .streamlit-expanderContent input[type="number"],
+    [data-testid="stExpander"] input {
+        background: rgba(26, 31, 58, 0.6) !important;
+        color: #ffffff !important;
+        border: 1px solid rgba(0, 229, 255, 0.3) !important;
     }
     
     /* Progress Bar */
@@ -250,7 +369,22 @@ def fetch_stock_return(url: str) -> float:
             return float(m2.group())
         return 0.0
     except Exception as e:
-        st.warning(f"Fetch error for {url}: {e}")
+        st.markdown(f"""
+        <div style="
+            background: linear-gradient(135deg, rgba(255, 193, 7, 0.1) 0%, rgba(255, 152, 0, 0.05) 100%);
+            border: 1px solid rgba(255, 193, 7, 0.3);
+            border-radius: 12px;
+            padding: 0.75rem 1.25rem;
+            margin: 1rem 0;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        ">
+            <span style="font-size: 1.25rem;">⚠️</span>
+            <span style="color: rgba(255, 255, 255, 0.9); font-weight: 500;">Fetch error for {url}: {e}</span>
+        </div>
+        """, unsafe_allow_html=True)
         return 0.0
 
 # ---------- Supabase CRUD ----------
@@ -313,7 +447,7 @@ def load_history_df() -> pd.DataFrame:
 # Custom Header
 st.markdown("""
 <div style="text-align: center; padding: 1rem 0 2rem 0;">
-    <h1 style="margin-bottom: 0.5rem;">📈 Motilal Midcap Fund</h1>
+    <h1 style="margin-bottom: 0.5rem;">Motilal Midcap</h1>
     <p style="color: rgba(255, 255, 255, 0.6); font-size: 1rem; font-weight: 400;">Real-Time Portfolio Tracking • NSE Holiday-Aware • Powered by Supabase</p>
 </div>
 """, unsafe_allow_html=True)
@@ -328,7 +462,19 @@ with tab1:
     portfolio_df = load_portfolio_df()
 
     if portfolio_df.empty:
-        st.info("No stocks in portfolio. Add some in the Manage tab.")
+        st.markdown("""
+        <div style="
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+            backdrop-filter: blur(10px);
+            text-align: center;
+        ">
+            <span style="color: rgba(255, 255, 255, 0.6); font-weight: 400;">No stocks in portfolio. Add some in the Manage tab.</span>
+        </div>
+        """, unsafe_allow_html=True)
     else:
         total_alloc = portfolio_df["allocation"].sum()
         rows, total_weighted = [], 0.0
@@ -352,7 +498,22 @@ with tab1:
             time.sleep(0.05)
 
         progress.empty()
-        status.success("✅ All stocks fetched successfully!")
+        status.markdown("""
+        <div style="
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.1) 0%, rgba(0, 184, 212, 0.05) 100%);
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            border-radius: 12px;
+            padding: 0.75rem 1.25rem;
+            margin: 1rem 0;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        ">
+            <span style="font-size: 1.25rem;">✅</span>
+            <span style="color: rgba(255, 255, 255, 0.9); font-weight: 500;">All stocks fetched successfully</span>
+        </div>
+        """, unsafe_allow_html=True)
 
         df_live = pd.DataFrame(rows).set_index("Stock")
         
@@ -364,17 +525,47 @@ with tab1:
             green_count = (df_live['Return']>0).sum()
             st.metric("🟢 Green Stocks", f"{green_count}/{len(df_live)}")
         with col3:
-            avg_return = df_live['Return'].mean()
-            st.metric("📊 Average Return", f"{avg_return:+.2f}%")
+            # Best performer
+            best_stock = df_live['Return'].idxmax()
+            best_return = df_live['Return'].max()
+            st.metric("🏆 Best Performer", f"{best_stock}", f"{best_return:+.2f}%")
         
         st.markdown("---")
 
         df_live = df_live.sort_values(by="Weight", ascending=False)
-        st.dataframe(df_live.style.format({
-            "Return": "{:+.2f}%",
-            "Contribution": "{:+.3f}%",
-            "Weight": "{:.2f}%"
-        }), use_container_width=True, height=350)
+        
+        # Create custom table using HTML in a container
+        st.markdown("""
+        <div style="
+            background: rgba(26, 31, 58, 0.4);
+            border-radius: 16px;
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            padding: 1rem;
+            margin: 1rem 0;
+        ">
+            <div style="display: grid; grid-template-columns: 2fr 1.5fr 1.5fr 1.5fr; gap: 1rem; padding: 0.75rem 1rem; background: linear-gradient(135deg, rgba(0, 229, 255, 0.2) 0%, rgba(0, 184, 212, 0.15) 100%); border-radius: 8px; margin-bottom: 0.5rem;">
+                <div style="color: #00e5ff; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.85rem;">Stock</div>
+                <div style="color: #00e5ff; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.85rem; text-align: right;">Return</div>
+                <div style="color: #00e5ff; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.85rem; text-align: right;">Weight</div>
+                <div style="color: #00e5ff; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; font-size: 0.85rem; text-align: right;">Contribution</div>
+            </div>
+        """, unsafe_allow_html=True)
+        
+        for idx, (stock, row) in enumerate(df_live.iterrows()):
+            return_val = row['Return']
+            return_color = "#00e5ff" if return_val > 0 else "#ff5252"
+            bg_color = "rgba(26, 31, 58, 0.3)" if idx % 2 == 0 else "rgba(26, 31, 58, 0.5)"
+            
+            st.markdown(f"""
+            <div style="display: grid; grid-template-columns: 2fr 1.5fr 1.5fr 1.5fr; gap: 1rem; padding: 0.75rem 1rem; background: {bg_color}; border-radius: 8px; margin-bottom: 0.25rem; transition: all 0.2s ease;" onmouseover="this.style.background='rgba(0, 229, 255, 0.08)'; this.style.transform='scale(1.005)'" onmouseout="this.style.background='{bg_color}'; this.style.transform='scale(1)'">
+                <div style="color: rgba(255, 255, 255, 0.95); font-weight: 500;">{stock}</div>
+                <div style="color: {return_color}; font-weight: 600; text-align: right;">{return_val:+.2f}%</div>
+                <div style="color: rgba(255, 255, 255, 0.9); text-align: right;">{row['Weight']:.2f}%</div>
+                <div style="color: rgba(255, 255, 255, 0.9); text-align: right;">{row['Contribution']:+.3f}%</div>
+            </div>
+            """, unsafe_allow_html=True)
+        
+        st.markdown("</div>", unsafe_allow_html=True)
 
         st.markdown("---")
         st.subheader("📊 Performance Heatmap")
@@ -411,7 +602,22 @@ with tab1:
                 for _, r in df_live.reset_index().iterrows()
             ]
             save_daily_snapshot_rows(snapshot_rows, total_weighted)
-            st.success("Saved today's snapshot to Supabase ✅")
+            st.markdown("""
+            <div style="
+                background: linear-gradient(135deg, rgba(0, 229, 255, 0.1) 0%, rgba(0, 184, 212, 0.05) 100%);
+                border: 1px solid rgba(0, 229, 255, 0.3);
+                border-radius: 12px;
+                padding: 0.75rem 1.25rem;
+                margin: 1rem 0;
+                backdrop-filter: blur(10px);
+                display: flex;
+                align-items: center;
+                gap: 0.75rem;
+            ">
+                <span style="font-size: 1.25rem;">💾</span>
+                <span style="color: rgba(255, 255, 255, 0.9); font-weight: 500;">Snapshot saved to Supabase successfully</span>
+            </div>
+            """, unsafe_allow_html=True)
 
 # ----------------------------------------------------------------
 # ⚙️ Manage Portfolio
@@ -430,10 +636,40 @@ with tab2:
         if add:
             if new_sym and new_url:
                 save_stock(new_sym.upper().strip(), new_url.strip(), float(new_alloc))
-                st.success(f"Saved {new_sym.upper().strip()}")
+                st.markdown(f"""
+                <div style="
+                    background: linear-gradient(135deg, rgba(0, 229, 255, 0.1) 0%, rgba(0, 184, 212, 0.05) 100%);
+                    border: 1px solid rgba(0, 229, 255, 0.3);
+                    border-radius: 12px;
+                    padding: 0.75rem 1.25rem;
+                    margin: 1rem 0;
+                    backdrop-filter: blur(10px);
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                ">
+                    <span style="font-size: 1.25rem;">✅</span>
+                    <span style="color: rgba(255, 255, 255, 0.9); font-weight: 500;">Saved {new_sym.upper().strip()}</span>
+                </div>
+                """, unsafe_allow_html=True)
                 st.rerun()
             else:
-                st.error("Please fill symbol and URL")
+                st.markdown("""
+                <div style="
+                    background: linear-gradient(135deg, rgba(255, 82, 82, 0.1) 0%, rgba(255, 23, 68, 0.05) 100%);
+                    border: 1px solid rgba(255, 82, 82, 0.3);
+                    border-radius: 12px;
+                    padding: 0.75rem 1.25rem;
+                    margin: 1rem 0;
+                    backdrop-filter: blur(10px);
+                    display: flex;
+                    align-items: center;
+                    gap: 0.75rem;
+                ">
+                    <span style="font-size: 1.25rem;">⚠️</span>
+                    <span style="color: rgba(255, 255, 255, 0.9); font-weight: 500;">Please fill symbol and URL</span>
+                </div>
+                """, unsafe_allow_html=True)
 
     st.markdown("---")
     st.subheader("Existing Stocks")
@@ -448,15 +684,57 @@ with tab2:
                 with col1:
                     if st.button("💾 Update", key=f"update_{sym}"):
                         save_stock(sym, url_in, float(alloc_in))
-                        st.success("Updated")
+                        st.markdown("""
+                        <div style="
+                            background: linear-gradient(135deg, rgba(0, 229, 255, 0.1) 0%, rgba(0, 184, 212, 0.05) 100%);
+                            border: 1px solid rgba(0, 229, 255, 0.3);
+                            border-radius: 12px;
+                            padding: 0.75rem 1.25rem;
+                            margin: 1rem 0;
+                            backdrop-filter: blur(10px);
+                            display: flex;
+                            align-items: center;
+                            gap: 0.75rem;
+                        ">
+                            <span style="font-size: 1.25rem;">✅</span>
+                            <span style="color: rgba(255, 255, 255, 0.9); font-weight: 500;">Updated successfully</span>
+                        </div>
+                        """, unsafe_allow_html=True)
                         st.rerun()
                 with col2:
                     if st.button("🗑 Delete", key=f"delete_{sym}"):
                         delete_stock(sym)
-                        st.success("Deleted")
+                        st.markdown("""
+                        <div style="
+                            background: linear-gradient(135deg, rgba(0, 229, 255, 0.1) 0%, rgba(0, 184, 212, 0.05) 100%);
+                            border: 1px solid rgba(0, 229, 255, 0.3);
+                            border-radius: 12px;
+                            padding: 0.75rem 1.25rem;
+                            margin: 1rem 0;
+                            backdrop-filter: blur(10px);
+                            display: flex;
+                            align-items: center;
+                            gap: 0.75rem;
+                        ">
+                            <span style="font-size: 1.25rem;">🗑️</span>
+                            <span style="color: rgba(255, 255, 255, 0.9); font-weight: 500;">Deleted successfully</span>
+                        </div>
+                        """, unsafe_allow_html=True)
                         st.rerun()
     else:
-        st.info("No stocks yet. Add one above.")
+        st.markdown("""
+        <div style="
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+            backdrop-filter: blur(10px);
+            text-align: center;
+        ">
+            <span style="color: rgba(255, 255, 255, 0.6); font-weight: 400;">No stocks yet. Add one above.</span>
+        </div>
+        """, unsafe_allow_html=True)
 
 # ----------------------------------------------------------------
 # 🧾 History & MF
@@ -483,7 +761,19 @@ with tab3:
 
         # if nothing left, show info
         if snaps_display.empty:
-            st.info("No valid snapshot rows to plot (check data types). See debug output above.")
+            st.markdown("""
+            <div style="
+                background: rgba(255, 255, 255, 0.02);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 12px;
+                padding: 1rem 1.5rem;
+                margin: 1rem 0;
+                backdrop-filter: blur(10px);
+                text-align: center;
+            ">
+                <span style="color: rgba(255, 255, 255, 0.6); font-weight: 400;">No valid snapshot rows to plot (check data types).</span>
+            </div>
+            """, unsafe_allow_html=True)
         else:
             # set index to date for plotting convenience
             snaps_display = snaps_display.set_index("date")
@@ -532,4 +822,16 @@ with tab3:
             )
             st.plotly_chart(fig_snap, use_container_width=True)
     else:
-        st.info("No snapshots yet. Use scheduled runner or Save snapshot from Portfolio tab.")
+        st.markdown("""
+        <div style="
+            background: rgba(255, 255, 255, 0.02);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            margin: 1rem 0;
+            backdrop-filter: blur(10px);
+            text-align: center;
+        ">
+            <span style="color: rgba(255, 255, 255, 0.6); font-weight: 400;">No snapshots yet. Use scheduled runner or Save snapshot from Portfolio tab.</span>
+        </div>
+        """, unsafe_allow_html=True)
