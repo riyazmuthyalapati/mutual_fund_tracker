@@ -27,10 +27,210 @@ supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # ---------- UI config ----------
 st.set_page_config(page_title="Motilal Midcap Fund Real Time Returns", page_icon="📈", layout="wide")
+
+# Premium Dark Theme with Glassmorphism
 st.markdown("""
 <style>
-    .main .block-container { padding: 1rem; }
-    [data-testid="metric-container"] { padding: 0.6rem; border-radius: 0.5rem; }
+    /* Import Modern Font */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+    
+    /* Global Styles */
+    * {
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+    
+    /* Main Background */
+    .stApp {
+        background: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 50%, #0f1419 100%);
+    }
+    
+    /* Hide Streamlit Branding */
+    #MainMenu {visibility: hidden;}
+    footer {visibility: hidden;}
+    header {visibility: hidden;}
+    
+    /* Container Styling */
+    .main .block-container {
+        padding: 2rem 3rem;
+        max-width: 1400px;
+    }
+    
+    /* Glassmorphism Cards */
+    [data-testid="stMetricValue"], [data-testid="metric-container"] {
+        background: rgba(255, 255, 255, 0.03);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 16px;
+        padding: 1.5rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    
+    [data-testid="metric-container"]:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 12px 48px rgba(0, 229, 255, 0.15);
+        border-color: rgba(0, 229, 255, 0.3);
+    }
+    
+    /* Metric Values */
+    [data-testid="stMetricValue"] {
+        font-size: 2.5rem !important;
+        font-weight: 700 !important;
+        background: linear-gradient(135deg, #00e5ff 0%, #00b8d4 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+    }
+    
+    [data-testid="stMetricLabel"] {
+        font-size: 0.95rem !important;
+        font-weight: 500 !important;
+        color: rgba(255, 255, 255, 0.7) !important;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    /* Buttons */
+    .stButton > button {
+        background: linear-gradient(135deg, #00e5ff 0%, #00b8d4 100%);
+        color: #0a0e27;
+        border: none;
+        border-radius: 12px;
+        padding: 0.75rem 2rem;
+        font-weight: 600;
+        font-size: 0.95rem;
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        box-shadow: 0 4px 16px rgba(0, 229, 255, 0.3);
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+    
+    .stButton > button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 229, 255, 0.5);
+        background: linear-gradient(135deg, #00f5ff 0%, #00c8e4 100%);
+    }
+    
+    .stButton > button:active {
+        transform: translateY(0px);
+    }
+    
+    /* Tabs */
+    .stTabs [data-baseweb="tab-list"] {
+        gap: 1rem;
+        background: rgba(255, 255, 255, 0.02);
+        padding: 0.5rem;
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .stTabs [data-baseweb="tab"] {
+        background: transparent;
+        border-radius: 12px;
+        padding: 0.75rem 1.5rem;
+        font-weight: 500;
+        color: rgba(255, 255, 255, 0.6);
+        transition: all 0.3s ease;
+        border: 1px solid transparent;
+    }
+    
+    .stTabs [data-baseweb="tab"]:hover {
+        background: rgba(255, 255, 255, 0.05);
+        color: rgba(255, 255, 255, 0.9);
+    }
+    
+    .stTabs [aria-selected="true"] {
+        background: linear-gradient(135deg, rgba(0, 229, 255, 0.15) 0%, rgba(0, 184, 212, 0.15) 100%);
+        color: #00e5ff !important;
+        border: 1px solid rgba(0, 229, 255, 0.3);
+    }
+    
+    /* DataFrames */
+    [data-testid="stDataFrame"] {
+        background: rgba(255, 255, 255, 0.02);
+        border-radius: 16px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        overflow: hidden;
+    }
+    
+    /* Input Fields */
+    .stTextInput > div > div > input,
+    .stNumberInput > div > div > input {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 12px;
+        color: #ffffff;
+        padding: 0.75rem 1rem;
+        transition: all 0.3s ease;
+    }
+    
+    .stTextInput > div > div > input:focus,
+    .stNumberInput > div > div > input:focus {
+        border-color: #00e5ff;
+        box-shadow: 0 0 0 2px rgba(0, 229, 255, 0.2);
+        background: rgba(255, 255, 255, 0.08);
+    }
+    
+    /* Expander */
+    .streamlit-expanderHeader {
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 12px;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        font-weight: 500;
+        transition: all 0.3s ease;
+    }
+    
+    .streamlit-expanderHeader:hover {
+        background: rgba(255, 255, 255, 0.05);
+        border-color: rgba(0, 229, 255, 0.3);
+    }
+    
+    /* Progress Bar */
+    .stProgress > div > div > div {
+        background: linear-gradient(90deg, #00e5ff 0%, #00b8d4 100%);
+        border-radius: 10px;
+    }
+    
+    /* Divider */
+    hr {
+        border-color: rgba(255, 255, 255, 0.1);
+        margin: 2rem 0;
+    }
+    
+    /* Success/Info/Warning Messages */
+    .stSuccess, .stInfo, .stWarning {
+        background: rgba(255, 255, 255, 0.05);
+        border-radius: 12px;
+        border-left: 4px solid #00e5ff;
+        backdrop-filter: blur(10px);
+    }
+    
+    /* Headings */
+    h1, h2, h3 {
+        font-weight: 700;
+        letter-spacing: -0.5px;
+    }
+    
+    h1 {
+        background: linear-gradient(135deg, #ffffff 0%, #00e5ff 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        font-size: 3rem;
+    }
+    
+    h2 {
+        color: rgba(255, 255, 255, 0.95);
+    }
+    
+    h3 {
+        color: rgba(255, 255, 255, 0.85);
+    }
+    
+    /* Smooth Scrolling */
+    html {
+        scroll-behavior: smooth;
+    }
 </style>
 """, unsafe_allow_html=True)
 
@@ -110,8 +310,13 @@ def load_history_df() -> pd.DataFrame:
     return df
 
 # ---------- App ----------
-st.title("Motilal Midcap Fund Real Time Returns")
-st.caption("Persistent Supabase • NSE holiday-aware scheduling • Rolling windows & MF comparison")
+# Custom Header
+st.markdown("""
+<div style="text-align: center; padding: 1rem 0 2rem 0;">
+    <h1 style="margin-bottom: 0.5rem;">📈 Motilal Midcap Fund</h1>
+    <p style="color: rgba(255, 255, 255, 0.6); font-size: 1rem; font-weight: 400;">Real-Time Portfolio Tracking • NSE Holiday-Aware • Powered by Supabase</p>
+</div>
+""", unsafe_allow_html=True)
 
 tab1, tab2, tab3 = st.tabs(["📊 Portfolio","⚙️ Manage","🧾 History"])
 
@@ -150,8 +355,18 @@ with tab1:
         status.success("✅ All stocks fetched successfully!")
 
         df_live = pd.DataFrame(rows).set_index("Stock")
-        st.metric("📈 Portfolio Return Today", f"{total_weighted:+.2f}%")
-        st.metric("Green Stocks", f"{(df_live['Return']>0).sum()}/{len(df_live)}")
+        
+        # Metrics Row
+        col1, col2, col3 = st.columns(3)
+        with col1:
+            st.metric("📈 Portfolio Return", f"{total_weighted:+.2f}%")
+        with col2:
+            green_count = (df_live['Return']>0).sum()
+            st.metric("🟢 Green Stocks", f"{green_count}/{len(df_live)}")
+        with col3:
+            avg_return = df_live['Return'].mean()
+            st.metric("📊 Average Return", f"{avg_return:+.2f}%")
+        
         st.markdown("---")
 
         df_live = df_live.sort_values(by="Weight", ascending=False)
@@ -162,9 +377,30 @@ with tab1:
         }), use_container_width=True, height=350)
 
         st.markdown("---")
-        st.subheader("Heatmap")
+        st.subheader("📊 Performance Heatmap")
         heat = np.array([df_live["Return"].values])
-        fig2 = px.imshow(heat, labels=dict(x="Stock", y=""), x=df_live.index, color_continuous_scale="RdYlGn")
+        fig2 = px.imshow(
+            heat, 
+            labels=dict(x="Stock", y=""), 
+            x=df_live.index, 
+            color_continuous_scale="RdYlGn",
+            aspect="auto"
+        )
+        fig2.update_layout(
+            plot_bgcolor='rgba(0,0,0,0)',
+            paper_bgcolor='rgba(0,0,0,0)',
+            font=dict(color='rgba(255,255,255,0.9)', family='Inter'),
+            xaxis=dict(
+                showgrid=False,
+                tickfont=dict(size=11)
+            ),
+            yaxis=dict(showgrid=False),
+            margin=dict(l=20, r=20, t=20, b=20),
+            height=150
+        )
+        fig2.update_traces(
+            hovertemplate='<b>%{x}</b><br>Return: %{z:+.2f}%<extra></extra>'
+        )
         st.plotly_chart(fig2, use_container_width=True)
 
         if st.button("💾 Save today's snapshot"):
@@ -257,14 +493,43 @@ with tab3:
                 snaps_display,
                 x=snaps_display.index,
                 y="portfolio_return",
-                title="Portfolio Return History",
                 markers=True
             )
             fig_snap.update_layout(
+                title={
+                    'text': "📈 Portfolio Return History",
+                    'font': {'size': 20, 'color': 'rgba(255,255,255,0.95)', 'family': 'Inter'},
+                    'x': 0.5,
+                    'xanchor': 'center'
+                },
+                plot_bgcolor='rgba(0,0,0,0)',
+                paper_bgcolor='rgba(0,0,0,0)',
+                font=dict(color='rgba(255,255,255,0.9)', family='Inter'),
                 xaxis_title="Date",
                 yaxis_title="Portfolio Return (%)",
-                xaxis=dict(tickformat="%b %d", dtick="D1")
+                xaxis=dict(
+                    tickformat="%b %d", 
+                    dtick="D1",
+                    showgrid=True,
+                    gridcolor='rgba(255,255,255,0.05)',
+                    gridwidth=1
+                ),
+                yaxis=dict(
+                    showgrid=True,
+                    gridcolor='rgba(255,255,255,0.05)',
+                    gridwidth=1,
+                    zeroline=True,
+                    zerolinecolor='rgba(255,255,255,0.2)',
+                    zerolinewidth=2
+                ),
+                hovermode='x unified',
+                margin=dict(l=60, r=40, t=60, b=60)
             )
-            st.plotly_chart(fig_snap, width="stretch")
+            fig_snap.update_traces(
+                line=dict(color='#00e5ff', width=3),
+                marker=dict(size=8, color='#00e5ff', line=dict(width=2, color='#0a0e27')),
+                hovertemplate='<b>%{y:+.2f}%</b><extra></extra>'
+            )
+            st.plotly_chart(fig_snap, use_container_width=True)
     else:
         st.info("No snapshots yet. Use scheduled runner or Save snapshot from Portfolio tab.")
