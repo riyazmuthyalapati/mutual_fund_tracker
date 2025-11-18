@@ -7,20 +7,18 @@ on:
 
 jobs:
   fetch-and-commit:
-    # 🛑 Prevent self-triggered runs caused by bot commits
     if: github.actor != 'github-actions[bot]'
     runs-on: ubuntu-latest
 
-    # 🚦 Prevent overlapping runs (cron + manual)
     concurrency:
       group: portfolio-fetch
       cancel-in-progress: true
 
     permissions:
-      contents: write   # ✅ allows git push using GITHUB_TOKEN
+      contents: write
 
     steps:
-      - name: Checkout repo (with write)
+      - name: Checkout repo
         uses: actions/checkout@v4
         with:
           persist-credentials: true
@@ -36,29 +34,17 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run daily fetch
+      - name: Debug Secrets (optional)
         env:
-          PORTFOLIO_DB: ./portfolio.db
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
+        run: |
+          echo "URL: $SUPABASE_URL"
+          echo "KEY length: ${#SUPABASE_KEY}"
+
+      - name: Run daily fetch (Supabase)
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_KEY: ${{ secrets.SUPABASE_KEY }}
         run: |
           python daily_fetch.py
-
-      - name: Commit updated DB (if changed)
-        shell: bash
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add portfolio.db || true
-
-          if ! git diff --cached --quiet; then
-            COMMIT_MSG="chore: daily snapshot update ($(date -u))"
-            git commit -m "$COMMIT_MSG" || echo "commit failed"
-            
-            # ✅ Ensure we have latest branch before pushing
-            git fetch origin main
-            git merge origin/main --no-edit || true
-
-            # ✅ Try normal push, fallback to force if needed
-            git push || git push --force
-          else
-            echo "No changes to commit"
-          fi
