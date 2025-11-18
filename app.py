@@ -154,7 +154,7 @@ with tab1:
         st.metric("Green Stocks", f"{(df_live['Return']>0).sum()}/{len(df_live)}")
         st.markdown("---")
 
-        df_live = df_live.sort_values(by="Return", ascending=False)
+        df_live = df_live.sort_values(by="Weight", ascending=False)
         st.dataframe(df_live.style.format({
             "Return": "{:+.2f}%",
             "Contribution": "{:+.3f}%",
