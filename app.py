@@ -530,7 +530,6 @@ with tab1:
             best_return = df_live['Return'].max()
             st.metric("🏆 Best Performer", f"{best_stock}", f"{best_return:+.2f}%")
         
-        st.markdown("---")
 
         df_live = df_live.sort_values(by="Weight", ascending=False)
         
@@ -567,7 +566,6 @@ with tab1:
         
         st.markdown("</div>", unsafe_allow_html=True)
 
-        st.markdown("---")
         st.subheader("📊 Performance Heatmap")
         heat = np.array([df_live["Return"].values])
         fig2 = px.imshow(
@@ -671,7 +669,6 @@ with tab2:
                 </div>
                 """, unsafe_allow_html=True)
 
-    st.markdown("---")
     st.subheader("Existing Stocks")
     portfolio_df = load_portfolio_df()
     if not portfolio_df.empty:
