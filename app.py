@@ -452,7 +452,7 @@ st.markdown("""
 </div>
 """, unsafe_allow_html=True)
 
-tab1, tab2, tab3 = st.tabs(["📊 Portfolio","⚙️ Manage","🧾 History"])
+tab1, tab2 = st.tabs(["📊 Portfolio","⚙️ Manage"])
 
 # ----------------------------------------------------------------
 # 📊 Portfolio
@@ -733,102 +733,4 @@ with tab2:
         </div>
         """, unsafe_allow_html=True)
 
-# ----------------------------------------------------------------
-# 🧾 History & MF
-# ----------------------------------------------------------------
-with tab3:
-    st.subheader("History & Mutual Fund Comparison")
-    snaps = load_snapshots_df()
-    hist = load_history_df()
 
-    if not snaps.empty:
-    # make a working copy
-        snaps_display = snaps.copy()
-
-        # ensure date is datetime
-        if snaps_display["date"].dtype == object or not np.issubdtype(snaps_display["date"].dtype, np.datetime64):
-            snaps_display["date"] = pd.to_datetime(snaps_display["date"], errors="coerce")
-
-        # drop rows with bad dates or missing returns
-        snaps_display = snaps_display.dropna(subset=["date", "portfolio_return"]).sort_values("date")
-
-        # ensure portfolio_return is numeric
-        snaps_display["portfolio_return"] = pd.to_numeric(snaps_display["portfolio_return"], errors="coerce")
-        snaps_display = snaps_display.dropna(subset=["portfolio_return"])
-
-        # if nothing left, show info
-        if snaps_display.empty:
-            st.markdown("""
-            <div style="
-                background: rgba(255, 255, 255, 0.02);
-                border: 1px solid rgba(255, 255, 255, 0.1);
-                border-radius: 12px;
-                padding: 1rem 1.5rem;
-                margin: 1rem 0;
-                backdrop-filter: blur(10px);
-                text-align: center;
-            ">
-                <span style="color: rgba(255, 255, 255, 0.6); font-weight: 400;">No valid snapshot rows to plot (check data types).</span>
-            </div>
-            """, unsafe_allow_html=True)
-        else:
-            # set index to date for plotting convenience
-            snaps_display = snaps_display.set_index("date")
-
-            # use px.line but enable markers so single points show
-            fig_snap = px.line(
-                snaps_display,
-                x=snaps_display.index,
-                y="portfolio_return",
-                markers=True
-            )
-            fig_snap.update_layout(
-                title={
-                    'text': "📈 Portfolio Return History",
-                    'font': {'size': 20, 'color': 'rgba(255,255,255,0.95)', 'family': 'Inter'},
-                    'x': 0.5,
-                    'xanchor': 'center'
-                },
-                plot_bgcolor='rgba(0,0,0,0)',
-                paper_bgcolor='rgba(0,0,0,0)',
-                font=dict(color='rgba(255,255,255,0.9)', family='Inter'),
-                xaxis_title="Date",
-                yaxis_title="Portfolio Return (%)",
-                xaxis=dict(
-                    tickformat="%b %d", 
-                    dtick="D1",
-                    showgrid=True,
-                    gridcolor='rgba(255,255,255,0.05)',
-                    gridwidth=1
-                ),
-                yaxis=dict(
-                    showgrid=True,
-                    gridcolor='rgba(255,255,255,0.05)',
-                    gridwidth=1,
-                    zeroline=True,
-                    zerolinecolor='rgba(255,255,255,0.2)',
-                    zerolinewidth=2
-                ),
-                hovermode='x unified',
-                margin=dict(l=60, r=40, t=60, b=60)
-            )
-            fig_snap.update_traces(
-                line=dict(color='#00e5ff', width=3),
-                marker=dict(size=8, color='#00e5ff', line=dict(width=2, color='#0a0e27')),
-                hovertemplate='<b>%{y:+.2f}%</b><extra></extra>'
-            )
-            st.plotly_chart(fig_snap, use_container_width=True)
-    else:
-        st.markdown("""
-        <div style="
-            background: rgba(255, 255, 255, 0.02);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 1rem 1.5rem;
-            margin: 1rem 0;
-            backdrop-filter: blur(10px);
-            text-align: center;
-        ">
-            <span style="color: rgba(255, 255, 255, 0.6); font-weight: 400;">No snapshots yet. Use scheduled runner or Save snapshot from Portfolio tab.</span>
-        </div>
-        """, unsafe_allow_html=True)
