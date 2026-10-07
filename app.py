@@ -261,18 +261,18 @@ with tab1:
         rows_html.append("</div>")
         st.markdown("".join(rows_html), unsafe_allow_html=True)
 
-        if st.button("💾 Save today's snapshot", key="save_snap", use_container_width=True):
-            today = date.today()
-            snapshot_rows = [
-                {"date": today, "symbol": sym, "ret": float(r["Return"]),
-                 "allocation": float(r["Weight"]), "contribution": float(r["Contribution"])}
-                for sym, r in df_live.iterrows()
-            ]
-            try:
-                save_daily_snapshot_rows(snapshot_rows, total)
-                notice("Snapshot saved", "ok", "💾")
-            except Exception as e:
-                notice(f"Save failed: {e}", "err", "⚠️")
+        # if st.button("💾 Save today's snapshot", key="save_snap", use_container_width=True):
+        #     today = date.today()
+        #     snapshot_rows = [
+        #         {"date": today, "symbol": sym, "ret": float(r["Return"]),
+        #          "allocation": float(r["Weight"]), "contribution": float(r["Contribution"])}
+        #         for sym, r in df_live.iterrows()
+        #     ]
+        #     try:
+        #         save_daily_snapshot_rows(snapshot_rows, total)
+        #         notice("Snapshot saved", "ok", "💾")
+        #     except Exception as e:
+        #         notice(f"Save failed: {e}", "err", "⚠️")
 
 # ----------------------------------------------------------------
 # ⚙️ Manage Portfolio
